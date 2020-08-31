@@ -7,6 +7,9 @@
 #ifndef _UTILS_UTILS_H_
 #define _UTILS_UTILS_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #ifndef NULL
 #define NULL                           ((void *)0)
 #endif
@@ -29,6 +32,10 @@
 #define STR(x) #x
 #define XSTR(x) STR(x)
 
+#define MATH_MOD(a, b)                 (((a % b) + b) % b)
+
+#define IS_POW2(n)                     ((n) & ((n) - 1))
+
 #define ARRAY_SIZEOF(x) \
 	(sizeof(x) / sizeof(x[0]))
 
@@ -39,6 +46,14 @@
 
 #define CONTAINER_OF(ptr, type, field) \
         ((type *)(((char *)(ptr)) - OFFSET_OF(type, field)))
+
+/* config_enabled() from the kernel */
+#define __IS_ENABLED1(x)             __IS_ENABLED2(__XXXX ## x)
+#define __XXXX1                       __YYYY,
+#define __IS_ENABLED2(y)             __IS_ENABLED3(y 1, 0)
+#define __IS_ENABLED3(_i, val, ...)   val
+
+#define IS_ENABLED(x)                 __IS_ENABLED1(x)
 
 /**
  * @brief Check p to be not NULL before calling safe_free()
@@ -57,5 +72,26 @@ void *safe_malloc(size_t size);
 void *safe_calloc(size_t count, size_t size);
 void *safe_realloc(void *data, size_t size);
 void *safe_strdup(const char *s);
+void *safe_realloc_zero(void *data, size_t old_size, size_t new_size);
+
+/**
+ * @brief Rounds up 32-bit v to nearest power of 2. If v is already a power
+ * of 2 it is returned unmodified.
+ */
+uint32_t round_up_pow2(uint32_t v);
+
+/**
+ * Description:
+ * 	Dumps an array of bytes in HEX and ASCII formats for
+ * 	debugging. `head` is string that is printed before the
+ * 	actual bytes are dumped.
+ *
+ * Example:
+ * 	int len;
+ * 	uint8_t data[MAX_LEN];
+ * 	len = get_data_from_somewhere(data, MAX_LEN);
+ * 	hexdump("Data From Somewhere", data, len);
+ */
+void hexdump(const char *head, const uint8_t *data, size_t len);
 
 #endif /* _UTILS_UTILS_H_ */

@@ -80,20 +80,19 @@ int test_str_copy()
 
 	ret = string_copy(&test_str, "a", "123", 3);
 	if (ret != -1) {
-		test_print_info_string("Apend after full", &test_str);
+		test_print_info_string("Append after full", &test_str);
 		return -1;
 	}
 
 	return 0;
 }
 
-void do_test_strlib(test_result_t *result)
+TEST_DEF(strlib)
 {
-	int total=0, pass=0;
+	TEST_MOD_INIT();
 
-	if (test_str_copy() == 0) pass++; total++;
-	if (test_str_printf() == 0) pass++; total++;
+	TEST_MOD_EXEC(test_str_copy());
+	TEST_MOD_EXEC(test_str_printf());
 
-	result->pass = pass;
-	result->total = total;
+	TEST_MOD_REPORT();
 }
